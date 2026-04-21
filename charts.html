@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Commerce Sales Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/recharts@2.15.0/umd/Recharts.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23DF6B33'/%3E%3Ctext x='50' y='68' font-size='55' font-weight='bold' fill='white' text-anchor='middle' font-family='sans-serif'%3EL%3C/text%3E%3C/svg%3E">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#090A14',
+            primary: '#DF6B33',
+            'primary-hover': '#C45A28',
+            surface: '#111827',
+            'surface-light': '#1F2937',
+            border: '#374151',
+          },
+          fontFamily: {
+            poppins: ['Poppins', 'sans-serif'],
+            inter: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #090A14; }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0px 1000px #111827 inset;
+      -webkit-text-fill-color: #F9FAFB;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #111827; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4B5563; }
+    .stat-card:hover { border-color: #DF6B33; box-shadow: 0 0 0 3px rgba(223,107,51,0.15); }
+  </style>
+</head>
+<body class="min-h-screen font-inter text-gray-100" style="background-color: #090A14;">
+
+  <!-- Header -->
+  <header class="border-b" style="border-color: #374151; background-color: #111827;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background-color: #DF6B33;">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <h1 class="font-poppins font-bold text-lg text-white leading-tight">Sales Report</h1>
+          <p class="text-xs text-gray-400">E-Commerce Dashboard — April 2026</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <select class="text-sm font-inter text-gray-300 rounded-lg px-3 py-2 border focus:outline-none cursor-pointer" style="background-color: #1F2937; border-color: #374151;">
+          <option>Last 7 days</option>
+          <option selected>Last 30 days</option>
+          <option>Last 3 months</option>
+          <option>Last 12 months</option>
+        </select>
+        <button class="p-2 rounded-lg border transition-all hover:bg-gray-800" style="border-color: #374151;">
+          <i data-lucide="download" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div class="stat-card rounded-2xl p-5 border transition-all" style="background-color: #111827; border-color: #374151;">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: rgba(223,107,51,0.15);">
+            <i data-lucide="dollar-sign" class="w-5 h-5" style="color: #DF6B33;"></i>
+          </div>
+          <span class="text-xs font-inter font-medium px-2 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">+12.5%</span>
+        </div>
+        <p class="text-gray-400 text-xs font-inter mb-1">Total Revenue</p>
+        <p class="font-poppins font-bold text-2xl text-white">$284,350</p>
+      </div>
+
+      <div class="stat-card rounded-2xl p-5 border transition-all" style="background-color: #111827; border-color: #374151;">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: rgba(59,130,246,0.15);">
+            <i data-lucide="shopping-cart" class="w-5 h-5" style="color: #3b82f6;"></i>
+          </div>
+          <span class="text-xs font-inter font-medium px-2 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">+8.3%</span>
+        </div>
+        <p class="text-gray-400 text-xs font-inter mb-1">Total Orders</p>
+        <p class="font-poppins font-bold text-2xl text-white">3,847</p>
+      </div>
+
+      <div class="stat-card rounded-2xl p-5 border transition-all" style="background-color: #111827; border-color: #374151;">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: rgba(168,85,247,0.15);">
+            <i data-lucide="trending-up" class="w-5 h-5" style="color: #a855f7;"></i>
+          </div>
+          <span class="text-xs font-inter font-medium px-2 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">+5.1%</span>
+        </div>
+        <p class="text-gray-400 text-xs font-inter mb-1">Avg Order Value</p>
+        <p class="font-poppins font-bold text-2xl text-white">$73.92</p>
+      </div>
+
+      <div class="stat-card rounded-2xl p-5 border transition-all" style="background-color: #111827; border-color: #374151;">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: rgba(34,197,94,0.15);">
+            <i data-lucide="percent" class="w-5 h-5" style="color: #22c55e;"></i>
+          </div>
+          <span class="text-xs font-inter font-medium px-2 py-1 rounded-full" style="background-color: rgba(239,68,68,0.15); color: #ef4444;">-1.2%</span>
+        </div>
+        <p class="text-gray-400 text-xs font-inter mb-1">Conversion Rate</p>
+        <p class="font-poppins font-bold text-2xl text-white">3.24%</p>
+      </div>
+
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Revenue Trend (Area Chart) -->
+      <div class="lg:col-span-2 rounded-2xl p-6 border" style="background-color: #111827; border-color: #374151;">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="font-poppins font-bold text-base text-white">Revenue Trend</h2>
+            <p class="text-xs font-inter text-gray-400 mt-0.5">Monthly revenue over the past year</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="text-xs font-inter px-3 py-1.5 rounded-lg border transition-all" style="background-color: #DF6B33; border-color: #DF6B33; color: white;">Revenue</button>
+            <button class="text-xs font-inter px-3 py-1.5 rounded-lg border transition-all text-gray-400" style="border-color: #374151;">Orders</button>
+          </div>
+        </div>
+        <div id="revenueChart" class="w-full" style="height: 260px;"></div>
+      </div>
+
+      <!-- Sales by Category (Pie Chart) -->
+      <div class="rounded-2xl p-6 border" style="background-color: #111827; border-color: #374151;">
+        <div class="mb-6">
+          <h2 class="font-poppins font-bold text-base text-white">Sales by Category</h2>
+          <p class="text-xs font-inter text-gray-400 mt-0.5">Revenue distribution by product category</p>
+        </div>
+        <div id="categoryChart" class="w-full flex justify-center" style="height: 260px;"></div>
+        <div class="mt-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #DF6B33;"></span><span class="text-xs font-inter text-gray-300">Electronics</span></div>
+            <span class="text-xs font-inter font-semibold text-white">38%</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #3b82f6;"></span><span class="text-xs font-inter text-gray-300">Fashion</span></div>
+            <span class="text-xs font-inter font-semibold text-white">24%</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #a855f7;"></span><span class="text-xs font-inter text-gray-300">Home & Living</span></div>
+            <span class="text-xs font-inter font-semibold text-white">18%</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #22c55e;"></span><span class="text-xs font-inter text-gray-300">Beauty</span></div>
+            <span class="text-xs font-inter font-semibold text-white">12%</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #f59e0b;"></span><span class="text-xs font-inter text-gray-300">Sports</span></div>
+            <span class="text-xs font-inter font-semibold text-white">8%</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Orders by Channel (Bar Chart) -->
+      <div class="rounded-2xl p-6 border" style="background-color: #111827; border-color: #374151;">
+        <div class="mb-6">
+          <h2 class="font-poppins font-bold text-base text-white">Orders by Channel</h2>
+          <p class="text-xs font-inter text-gray-400 mt-0.5">Order volume across sales channels</p>
+        </div>
+        <div id="channelChart" class="w-full" style="height: 220px;"></div>
+      </div>
+
+      <!-- Marketing Performance (Line Chart) -->
+      <div class="rounded-2xl p-6 border" style="background-color: #111827; border-color: #374151;">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="font-poppins font-bold text-base text-white">Marketing Performance</h2>
+            <p class="text-xs font-inter text-gray-400 mt-0.5">Traffic & conversions from marketing channels</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-0.5 rounded-full inline-block" style="background-color: #DF6B33;"></span>
+              <span class="text-xs font-inter text-gray-400">Traffic</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-0.5 rounded-full inline-block" style="background-color: #22c55e;"></span>
+              <span class="text-xs font-inter text-gray-400">Conversions</span>
+            </div>
+          </div>
+        </div>
+        <div id="marketingChart" class="w-full" style="height: 220px;"></div>
+      </div>
+
+    </div>
+
+    <!-- Top Products Table -->
+    <div class="rounded-2xl border" style="background-color: #111827; border-color: #374151;">
+      <div class="p-6 border-b" style="border-color: #374151;">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-poppins font-bold text-base text-white">Top Selling Products</h2>
+            <p class="text-xs font-inter text-gray-400 mt-0.5">Best performing products this month</p>
+          </div>
+          <button class="text-xs font-inter text-primary hover:text-primary-hover transition-colors">View all</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr style="border-bottom: 1px solid #374151;">
+              <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Product</th>
+              <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Category</th>
+              <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Revenue</th>
+              <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Units Sold</th>
+              <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Growth</th>
+              <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="smartphone" class="w-4 h-4 text-gray-400"></i></div>
+                  <div>
+                    <p class="text-sm font-inter font-medium text-white">iPhone 15 Pro Max</p>
+                    <p class="text-xs font-inter text-gray-500 sm:hidden">Electronics</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Electronics</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$42,850</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">312</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #22c55e;">+18.4%</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Active</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="laptop" class="w-4 h-4 text-gray-400"></i></div>
+                  <div>
+                    <p class="text-sm font-inter font-medium text-white">MacBook Air M3</p>
+                    <p class="text-xs font-inter text-gray-500 sm:hidden">Electronics</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Electronics</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$38,200</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">189</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #22c55e;">+12.1%</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Active</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="shirt" class="w-4 h-4 text-gray-400"></i></div>
+                  <div>
+                    <p class="text-sm font-inter font-medium text-white">Premium Cotton Hoodie</p>
+                    <p class="text-xs font-inter text-gray-500 sm:hidden">Fashion</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Fashion</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$24,630</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">821</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #22c55e;">+9.7%</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Active</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="glasses" class="w-4 h-4 text-gray-400"></i></div>
+                  <div>
+                    <p class="text-sm font-inter font-medium text-white">Wireless Earbuds Pro</p>
+                    <p class="text-xs font-inter text-gray-500 sm:hidden">Electronics</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Electronics</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$19,450</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">547</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #ef4444;">-3.2%</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(239,68,68,0.15); color: #ef4444;">Low Stock</span></td>
+            </tr>
+            <tr class="hover:bg-gray-800/40 transition">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="couch" class="w-4 h-4 text-gray-400"></i></div>
+                  <div>
+                    <p class="text-sm font-inter font-medium text-white">Ergonomic Desk Chair</p>
+                    <p class="text-xs font-inter text-gray-500 sm:hidden">Home & Living</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Home & Living</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$16,920</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">142</span></td>
+              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #22c55e;">+21.5%</span></td>
+              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Orders + Marketing Table -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Recent Orders Table -->
+      <div class="rounded-2xl border" style="background-color: #111827; border-color: #374151;">
+        <div class="p-6 border-b flex items-center justify-between" style="border-color: #374151;">
+          <div>
+            <h2 class="font-poppins font-bold text-base text-white">Recent Orders</h2>
+            <p class="text-xs font-inter text-gray-400 mt-0.5">Latest customer orders</p>
+          </div>
+          <button class="text-xs font-inter text-primary hover:text-primary-hover transition-colors">View all</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr style="border-bottom: 1px solid #374151;">
+                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Order ID</th>
+                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Customer</th>
+                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Total</th>
+                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Date</th>
+                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7821</span></td>
+                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Sarah Johnson</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$1,299</span></td>
+                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 21, 2026</span></td>
+                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Delivered</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7820</span></td>
+                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Michael Chen</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$849</span></td>
+                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 21, 2026</span></td>
+                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(251,191,36,0.15); color: #fbbf24;">Processing</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7819</span></td>
+                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Emily Davis</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$234</span></td>
+                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 20, 2026</span></td>
+                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(59,130,246,0.15); color: #3b82f6;">Shipped</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7818</span></td>
+                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">David Kim</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$1,580</span></td>
+                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 20, 2026</span></td>
+                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(239,68,68,0.15); color: #ef4444;">Cancelled</span></td>
+              </tr>
+              <tr class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7817</span></td>
+                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Jessica Lee</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$456</span></td>
+                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 19, 2026</span></td>
+                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Delivered</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Marketing Campaigns Table -->
+      <div class="rounded-2xl border" style="background-color: #111827; border-color: #374151;">
+        <div class="p-6 border-b flex items-center justify-between" style="border-color: #374151;">
+          <div>
+            <h2 class="font-poppins font-bold text-base text-white">Marketing Campaigns</h2>
+            <p class="text-xs font-inter text-gray-400 mt-0.5">Active campaign performance</p>
+          </div>
+          <button class="text-xs font-inter text-primary hover:text-primary-hover transition-colors">View all</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr style="border-bottom: 1px solid #374151;">
+                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Campaign</th>
+                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Budget</th>
+                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Spent</th>
+                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">ROI</th>
+                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-inter font-medium text-white">Facebook Ads</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$5,000</span></td>
+                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$4,520</span></td>
+                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #22c55e;">245%</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Success</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">Google Shopping</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$8,000</span></td>
+                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$7,250</span></td>
+                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #22c55e;">285%</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Success</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">Email Marketing</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$2,500</span></td>
+                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$1,830</span></td>
+                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #22c55e;">340%</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Success</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">Influencer Marketing</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$3,500</span></td>
+                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$3,280</span></td>
+                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #fbbf24;">165%</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(251,191,36,0.15); color: #fbbf24;">Running</span></td>
+              </tr>
+              <tr class="hover:bg-gray-800/40 transition">
+                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">SEO Organic</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$1,500</span></td>
+                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$1,210</span></td>
+                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #22c55e;">425%</span></td>
+                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(59,130,246,0.15); color: #3b82f6;">Optimized</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    lucide.createIcons();
+
+    var r = React.createElement.bind(React);
+
+    // ── Revenue Trend (Area Chart) ──────────────────────────────────────────
+    var revenueData = [
+      { month: 'May', revenue: 18200 }, { month: 'Jun', revenue: 21300 },
+      { month: 'Jul', revenue: 19800 }, { month: 'Aug', revenue: 24700 },
+      { month: 'Sep', revenue: 22100 }, { month: 'Oct', revenue: 26800 },
+      { month: 'Nov', revenue: 31200 }, { month: 'Dec', revenue: 38900 },
+      { month: 'Jan', revenue: 24100 }, { month: 'Feb', revenue: 27500 },
+      { month: 'Mar', revenue: 29800 }, { month: 'Apr', revenue: 32150 },
+    ];
+
+    var tooltipStyle = { backgroundColor: '#111827', border: '1px solid #374151', borderRadius: 12, color: '#F9FAFB', fontFamily: 'Inter, sans-serif', fontSize: 12 };
+
+    var revGrad = r(Recharts.Defs, {},
+      r(Recharts.LinearGradient, { id: 'revGrad', x1: '0', y1: '0', x2: '0', y2: '1' },
+        r(Recharts.Stop, { offset: '0%', stopColor: '#DF6B33', stopOpacity: 0.3 }),
+        r(Recharts.Stop, { offset: '100%', stopColor: '#DF6B33', stopOpacity: 0 })
+      )
+    );
+
+    var el1 = r(Recharts.AreaChart, { data: revenueData, margin: { top: 5, right: 5, left: -20, bottom: 0 } },
+      r(Recharts.CartesianGrid, { strokeDasharray: '3 3', vertical: false, stroke: '#374151' }),
+      r(Recharts.XAxis, { dataKey: 'month', tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
+      r(Recharts.YAxis, { tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false, tickFormatter: function(v){ return '$' + (v/1000) + 'k'; } }),
+      r(Recharts.Tooltip, { contentStyle: tooltipStyle, formatter: function(v){ return ['$' + v.toLocaleString()]; } }),
+      revGrad,
+      r(Recharts.Area, { type: 'monotone', dataKey: 'revenue', stroke: '#DF6B33', strokeWidth: 2.5, fill: 'url(#revGrad)', dot: false, activeDot: { r: 5, fill: '#DF6B33', stroke: '#111827', strokeWidth: 2 } })
+    );
+    ReactDOM.createRoot(document.getElementById('revenueChart')).render(el1);
+
+    // ── Sales by Category (Pie Chart) ─────────────────────────────────────
+    var catData = [
+      { name: 'Electronics', value: 38, fill: '#DF6B33' },
+      { name: 'Fashion', value: 24, fill: '#3b82f6' },
+      { name: 'Home & Living', value: 18, fill: '#a855f7' },
+      { name: 'Beauty', value: 12, fill: '#22c55e' },
+      { name: 'Sports', value: 8, fill: '#f59e0b' },
+    ];
+
+    var el2 = r(Recharts.PieChart, { margin: { top: 0, right: 0, bottom: 0, left: 0 } },
+      r(Recharts.Pie, { data: catData, cx: '50%', cy: '50%', innerRadius: 55, outerRadius: 90, paddingAngle: 3, dataKey: 'value', stroke: 'none' }),
+      r(Recharts.Tooltip, { contentStyle: tooltipStyle, formatter: function(v, n){ return [v + '%', n]; } })
+    );
+    ReactDOM.createRoot(document.getElementById('categoryChart')).render(el2);
+
+    // ── Orders by Channel (Bar Chart) ─────────────────────────────────────
+    var chData = [
+      { channel: 'Website', orders: 1842 }, { channel: 'Mobile App', orders: 1205 },
+      { channel: 'Marketplace', orders: 623 }, { channel: 'Social Media', orders: 177 },
+    ];
+
+    var el3 = r(Recharts.BarChart, { data: chData, margin: { top: 5, right: 5, left: -20, bottom: 0 } },
+      r(Recharts.CartesianGrid, { strokeDasharray: '3 3', vertical: false, stroke: '#374151' }),
+      r(Recharts.XAxis, { dataKey: 'channel', tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
+      r(Recharts.YAxis, { tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
+      r(Recharts.Tooltip, { contentStyle: tooltipStyle }),
+      r(Recharts.Bar, { dataKey: 'orders', radius: [6, 6, 0, 0], fill: '#DF6B33', fillOpacity: 0.9, maxBarSize: 60 })
+    );
+    ReactDOM.createRoot(document.getElementById('channelChart')).render(el3);
+
+    // ── Marketing Performance (Line Chart) ─────────────────────────────────
+    var mktData = [
+      { week: 'W1', traffic: 12400, conversions: 382 },
+      { week: 'W2', traffic: 14800, conversions: 441 },
+      { week: 'W3', traffic: 13200, conversions: 398 },
+      { week: 'W4', traffic: 16700, conversions: 523 },
+      { week: 'W5', traffic: 15100, conversions: 467 },
+      { week: 'W6', traffic: 18900, conversions: 598 },
+    ];
+
+    var el4 = r(Recharts.LineChart, { data: mktData, margin: { top: 5, right: 5, left: -20, bottom: 0 } },
+      r(Recharts.CartesianGrid, { strokeDasharray: '3 3', vertical: false, stroke: '#374151' }),
+      r(Recharts.XAxis, { dataKey: 'week', tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
+      r(Recharts.YAxis, { tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
+      r(Recharts.Tooltip, { contentStyle: tooltipStyle }),
+      r(Recharts.Line, { type: 'monotone', dataKey: 'traffic', stroke: '#DF6B33', strokeWidth: 2.5, dot: { r: 3, fill: '#DF6B33' }, activeDot: { r: 5 } }),
+      r(Recharts.Line, { type: 'monotone', dataKey: 'conversions', stroke: '#22c55e', strokeWidth: 2.5, dot: { r: 3, fill: '#22c55e' }, activeDot: { r: 5 } })
+    );
+    ReactDOM.createRoot(document.getElementById('marketingChart')).render(el4);
+  </script>
+
+</body>
+</html>
