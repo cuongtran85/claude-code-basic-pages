@@ -1,545 +1,1026 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Commerce Sales Report</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/recharts@2.15.0/umd/Recharts.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23DF6B33'/%3E%3Ctext x='50' y='68' font-size='55' font-weight='bold' fill='white' text-anchor='middle' font-family='sans-serif'%3EL%3C/text%3E%3C/svg%3E">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            bg: '#090A14',
-            primary: '#DF6B33',
-            'primary-hover': '#C45A28',
-            surface: '#111827',
-            'surface-light': '#1F2937',
-            border: '#374151',
-          },
-          fontFamily: {
-            poppins: ['Poppins', 'sans-serif'],
-            inter: ['Inter', 'sans-serif'],
-          },
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - E-Commerce Analytics</title>
+    <!-- Google Fonts: Poppins and Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-      }
-    }
-  </script>
-  <style>
-    body { background-color: #090A14; }
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus {
-      -webkit-box-shadow: 0 0 0px 1000px #111827 inset;
-      -webkit-text-fill-color: #F9FAFB;
-      transition: background-color 5000s ease-in-out 0s;
-    }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #111827; }
-    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #4B5563; }
-    .stat-card:hover { border-color: #DF6B33; box-shadow: 0 0 0 3px rgba(223,107,51,0.15); }
-  </style>
+
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --bg-base: #090A14;
+            --bg-card: #1f2937;
+            --bg-card-hover: #263344;
+            --primary: #DF6B33;
+            --primary-hover: #c55a2a;
+            --primary-light: rgba(223, 107, 51, 0.15);
+            --border: #374151;
+            --input-bg: #374151;
+            --input-border: #4b5563;
+            --text-white: #ffffff;
+            --text-gray: #9ca3af;
+            --text-muted: #6b7280;
+            --success: #22c55e;
+            --success-light: rgba(34, 197, 94, 0.15);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.15);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.15);
+            --font-heading: 'Poppins', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* ===== BODY ===== */
+        body {
+            background-color: var(--bg-base);
+            font-family: var(--font-body);
+            color: var(--text-white);
+            min-height: 100vh;
+            padding: 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+        }
+
+        /* ===== LAYOUT ===== */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        .dashboard-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .date-range {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .date-range:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(223, 107, 51, 0.3);
+        }
+
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: background-color 0.15s, color 0.15s;
+        }
+
+        .btn-icon:hover {
+            background-color: var(--bg-card-hover);
+            color: var(--text-white);
+        }
+
+        /* ===== KPI CARDS ===== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .kpi-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            transition: border-color 0.15s;
+        }
+
+        .kpi-card:hover {
+            border-color: var(--input-border);
+        }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .kpi-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kpi-icon.orange { background-color: var(--primary-light); color: var(--primary); }
+        .kpi-icon.green { background-color: var(--success-light); color: var(--success); }
+        .kpi-icon.blue { background-color: var(--info-light); color: var(--info); }
+        .kpi-icon.yellow { background-color: var(--warning-light); color: var(--warning); }
+
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            font-family: var(--font-heading);
+            color: var(--text-white);
+            line-height: 1.2;
+        }
+
+        .kpi-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+        }
+
+        .kpi-change.up {
+            color: var(--success);
+            background-color: var(--success-light);
+        }
+
+        .kpi-change.down {
+            color: var(--danger);
+            background-color: var(--danger-light);
+        }
+
+        .kpi-change svg {
+            width: 0.75rem;
+            height: 0.75rem;
+        }
+
+        /* ===== CHART GRID ===== */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .charts-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-white);
+        }
+
+        .card-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.125rem;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 0.25rem;
+            background-color: var(--bg-base);
+            border-radius: 0.375rem;
+            padding: 0.25rem;
+        }
+
+        .chart-tab {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: background-color 0.15s, color 0.15s;
+        }
+
+        .chart-tab.active {
+            background-color: var(--bg-card);
+            color: var(--primary);
+        }
+
+        .chart-tab:hover:not(.active) {
+            color: var(--text-gray);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+        }
+
+        .chart-container-sm {
+            position: relative;
+            height: 240px;
+        }
+
+        /* ===== TABLE ===== */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .data-table thead {
+            background-color: var(--bg-base);
+        }
+
+        .data-table th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-gray);
+            white-space: nowrap;
+        }
+
+        .data-table tbody tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge.orange { background-color: var(--primary-light); color: var(--primary); }
+        .badge.green { background-color: var(--success-light); color: var(--success); }
+        .badge.blue { background-color: var(--info-light); color: var(--info); }
+        .badge.yellow { background-color: var(--warning-light); color: var(--warning); }
+        .badge.purple { background-color: rgba(168, 85, 247, 0.15); color: #a855f7; }
+
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .font-medium { font-weight: 500; }
+        .text-white { color: var(--text-white); }
+
+        /* ===== LEGEND ===== */
+        .chart-legend {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .legend-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ===== PAGE NAV ===== */
+        .page-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .page-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background-color: var(--bg-card);
+            transition: border-color 0.15s, color 0.15s;
+        }
+
+        .page-link:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-link svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .kpi-value {
+                font-size: 1.25rem;
+            }
+
+            .dashboard-title {
+                font-size: 1.25rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.5rem 0.75rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== ACCESSIBILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
 </head>
-<body class="min-h-screen font-inter text-gray-100" style="background-color: #090A14;">
-
-  <!-- Header -->
-  <header class="border-b" style="border-color: #374151; background-color: #111827;">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background-color: #DF6B33;">
-          <i data-lucide="bar-chart-3" class="w-5 h-5 text-white"></i>
-        </div>
-        <div>
-          <h1 class="font-poppins font-bold text-lg text-white leading-tight">Sales Report</h1>
-          <p class="text-xs text-gray-400">E-Commerce Dashboard — April 2026</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <select class="text-sm font-inter text-gray-300 rounded-lg px-3 py-2 border focus:outline-none cursor-pointer" style="background-color: #1F2937; border-color: #374151;">
-          <option>Last 7 days</option>
-          <option selected>Last 30 days</option>
-          <option>Last 3 months</option>
-          <option>Last 12 months</option>
-        </select>
-        <button class="p-2 rounded-lg border transition-all hover:bg-gray-800" style="border-color: #374151;">
-          <i data-lucide="download" class="w-4 h-4 text-gray-400"></i>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-
-    <!-- KPI Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-
-      <div class="stat-card rounded-2xl p-5 border transition-all" style="background-color: #111827; border-color: #374151;">
-        <div class="flex items-center justify-between mb-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: rgba(223,107,51,0.15);">
-            <i data-lucide="dollar-sign" class="w-5 h-5" style="color: #DF6B33;"></i>
-          </div>
-          <span class="text-xs font-inter font-medium px-2 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">+12.5%</span>
-        </div>
-        <p class="text-gray-400 text-xs font-inter mb-1">Total Revenue</p>
-        <p class="font-poppins font-bold text-2xl text-white">$284,350</p>
-      </div>
-
-      <div class="stat-card rounded-2xl p-5 border transition-all" style="background-color: #111827; border-color: #374151;">
-        <div class="flex items-center justify-between mb-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: rgba(59,130,246,0.15);">
-            <i data-lucide="shopping-cart" class="w-5 h-5" style="color: #3b82f6;"></i>
-          </div>
-          <span class="text-xs font-inter font-medium px-2 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">+8.3%</span>
-        </div>
-        <p class="text-gray-400 text-xs font-inter mb-1">Total Orders</p>
-        <p class="font-poppins font-bold text-2xl text-white">3,847</p>
-      </div>
-
-      <div class="stat-card rounded-2xl p-5 border transition-all" style="background-color: #111827; border-color: #374151;">
-        <div class="flex items-center justify-between mb-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: rgba(168,85,247,0.15);">
-            <i data-lucide="trending-up" class="w-5 h-5" style="color: #a855f7;"></i>
-          </div>
-          <span class="text-xs font-inter font-medium px-2 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">+5.1%</span>
-        </div>
-        <p class="text-gray-400 text-xs font-inter mb-1">Avg Order Value</p>
-        <p class="font-poppins font-bold text-2xl text-white">$73.92</p>
-      </div>
-
-      <div class="stat-card rounded-2xl p-5 border transition-all" style="background-color: #111827; border-color: #374151;">
-        <div class="flex items-center justify-between mb-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: rgba(34,197,94,0.15);">
-            <i data-lucide="percent" class="w-5 h-5" style="color: #22c55e;"></i>
-          </div>
-          <span class="text-xs font-inter font-medium px-2 py-1 rounded-full" style="background-color: rgba(239,68,68,0.15); color: #ef4444;">-1.2%</span>
-        </div>
-        <p class="text-gray-400 text-xs font-inter mb-1">Conversion Rate</p>
-        <p class="font-poppins font-bold text-2xl text-white">3.24%</p>
-      </div>
-
-    </div>
-
-    <!-- Charts Row 1 -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-      <!-- Revenue Trend (Area Chart) -->
-      <div class="lg:col-span-2 rounded-2xl p-6 border" style="background-color: #111827; border-color: #374151;">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h2 class="font-poppins font-bold text-base text-white">Revenue Trend</h2>
-            <p class="text-xs font-inter text-gray-400 mt-0.5">Monthly revenue over the past year</p>
-          </div>
-          <div class="flex gap-2">
-            <button class="text-xs font-inter px-3 py-1.5 rounded-lg border transition-all" style="background-color: #DF6B33; border-color: #DF6B33; color: white;">Revenue</button>
-            <button class="text-xs font-inter px-3 py-1.5 rounded-lg border transition-all text-gray-400" style="border-color: #374151;">Orders</button>
-          </div>
-        </div>
-        <div id="revenueChart" class="w-full" style="height: 260px;"></div>
-      </div>
-
-      <!-- Sales by Category (Pie Chart) -->
-      <div class="rounded-2xl p-6 border" style="background-color: #111827; border-color: #374151;">
-        <div class="mb-6">
-          <h2 class="font-poppins font-bold text-base text-white">Sales by Category</h2>
-          <p class="text-xs font-inter text-gray-400 mt-0.5">Revenue distribution by product category</p>
-        </div>
-        <div id="categoryChart" class="w-full flex justify-center" style="height: 260px;"></div>
-        <div class="mt-4 space-y-2">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #DF6B33;"></span><span class="text-xs font-inter text-gray-300">Electronics</span></div>
-            <span class="text-xs font-inter font-semibold text-white">38%</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #3b82f6;"></span><span class="text-xs font-inter text-gray-300">Fashion</span></div>
-            <span class="text-xs font-inter font-semibold text-white">24%</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #a855f7;"></span><span class="text-xs font-inter text-gray-300">Home & Living</span></div>
-            <span class="text-xs font-inter font-semibold text-white">18%</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #22c55e;"></span><span class="text-xs font-inter text-gray-300">Beauty</span></div>
-            <span class="text-xs font-inter font-semibold text-white">12%</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background-color: #f59e0b;"></span><span class="text-xs font-inter text-gray-300">Sports</span></div>
-            <span class="text-xs font-inter font-semibold text-white">8%</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Charts Row 2 -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-      <!-- Orders by Channel (Bar Chart) -->
-      <div class="rounded-2xl p-6 border" style="background-color: #111827; border-color: #374151;">
-        <div class="mb-6">
-          <h2 class="font-poppins font-bold text-base text-white">Orders by Channel</h2>
-          <p class="text-xs font-inter text-gray-400 mt-0.5">Order volume across sales channels</p>
-        </div>
-        <div id="channelChart" class="w-full" style="height: 220px;"></div>
-      </div>
-
-      <!-- Marketing Performance (Line Chart) -->
-      <div class="rounded-2xl p-6 border" style="background-color: #111827; border-color: #374151;">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h2 class="font-poppins font-bold text-base text-white">Marketing Performance</h2>
-            <p class="text-xs font-inter text-gray-400 mt-0.5">Traffic & conversions from marketing channels</p>
-          </div>
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1.5">
-              <span class="w-2.5 h-0.5 rounded-full inline-block" style="background-color: #DF6B33;"></span>
-              <span class="text-xs font-inter text-gray-400">Traffic</span>
+<body>
+    <div class="dashboard">
+        <!-- HEADER -->
+        <div class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">Dashboard</h1>
+                <p class="dashboard-subtitle">E-Commerce Performance Overview — Apr 2026</p>
             </div>
-            <div class="flex items-center gap-1.5">
-              <span class="w-2.5 h-0.5 rounded-full inline-block" style="background-color: #22c55e;"></span>
-              <span class="text-xs font-inter text-gray-400">Conversions</span>
+            <div class="header-actions">
+                <select class="date-range">
+                    <option>Last 12 months</option>
+                    <option>Last 6 months</option>
+                    <option>Last 3 months</option>
+                    <option>This year</option>
+                </select>
+                <button class="btn-icon" aria-label="Download report">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                </button>
+                <button class="btn-icon" aria-label="Refresh data">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                    </svg>
+                </button>
             </div>
-          </div>
         </div>
-        <div id="marketingChart" class="w-full" style="height: 220px;"></div>
-      </div>
 
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Revenue</span>
+                    <div class="kpi-icon orange">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                </div>
+                <div class="kpi-value">$826,900</div>
+                <div class="kpi-change up">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                    +12.5% vs last year
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Orders</span>
+                    <div class="kpi-icon green">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    </div>
+                </div>
+                <div class="kpi-value">5,451</div>
+                <div class="kpi-change up">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                    +8.3% vs last year
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Conversion Rate</span>
+                    <div class="kpi-icon blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    </div>
+                </div>
+                <div class="kpi-value">3.84%</div>
+                <div class="kpi-change up">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                    +0.6% vs last month
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Avg. Order Value</span>
+                    <div class="kpi-icon yellow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                </div>
+                <div class="kpi-value">$151.70</div>
+                <div class="kpi-change down">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    -2.1% vs last month
+                </div>
+            </div>
+        </div>
+
+        <!-- SALES REVENUE + CATEGORY BREAKDOWN -->
+        <div class="charts-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Sales Revenue</h2>
+                        <p class="card-subtitle">Monthly revenue and order volume</p>
+                    </div>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" id="tabBar" onclick="setRevenueTab('bar')">Bar</button>
+                        <button class="chart-tab" id="tabLine" onclick="setRevenueTab('line')">Line</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Revenue by Category</h2>
+                        <p class="card-subtitle">Sales distribution across product categories</p>
+                    </div>
+                </div>
+                <div class="chart-container-sm">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color:#DF6B33"></div>Electronics (38%)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color:#3b82f6"></div>Fashion (24%)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color:#22c55e"></div>Home & Living (18%)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color:#f59e0b"></div>Beauty (12%)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color:#a855f7"></div>Sports (8%)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUSINESS RESULTS -->
+        <div class="charts-grid-2">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Business Results</h2>
+                        <p class="card-subtitle">Revenue vs. profit trend over 12 months</p>
+                    </div>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" id="tabArea" onclick="setResultTab('area')">Area</button>
+                        <button class="chart-tab" id="tabBarResult" onclick="setResultTab('bar')">Bar</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="resultChart"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color:#DF6B33"></div>Revenue</div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color:#22c55e"></div>Profit</div>
+                </div>
+            </div>
+
+            <!-- TOP PRODUCTS TABLE -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Top Products</h2>
+                        <p class="card-subtitle">Best-selling products this month</p>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th class="text-right">Sold</th>
+                                <th class="text-right">Revenue</th>
+                                <th class="text-right">Growth</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-medium">1</td>
+                                <td class="text-white">Wireless Earbuds Pro</td>
+                                <td><span class="badge blue">Electronics</span></td>
+                                <td class="text-right">1,247</td>
+                                <td class="text-right text-white font-medium">$62,350</td>
+                                <td class="text-right"><span style="color:#22c55e;font-weight:500;font-size:0.75rem">+18.2%</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">2</td>
+                                <td class="text-white">Smart Watch Series X</td>
+                                <td><span class="badge blue">Electronics</span></td>
+                                <td class="text-right">892</td>
+                                <td class="text-right text-white font-medium">$53,520</td>
+                                <td class="text-right"><span style="color:#22c55e;font-weight:500;font-size:0.75rem">+24.5%</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">3</td>
+                                <td class="text-white">Premium Laptop Stand</td>
+                                <td><span class="badge blue">Electronics</span></td>
+                                <td class="text-right">756</td>
+                                <td class="text-right text-white font-medium">$22,680</td>
+                                <td class="text-right"><span style="color:#22c55e;font-weight:500;font-size:0.75rem">+12.8%</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">4</td>
+                                <td class="text-white">Running Shoes Ultra</td>
+                                <td><span class="badge orange">Sports</span></td>
+                                <td class="text-right">634</td>
+                                <td class="text-right text-white font-medium">$19,020</td>
+                                <td class="text-right"><span style="color:#22c55e;font-weight:500;font-size:0.75rem">+9.3%</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">5</td>
+                                <td class="text-white">Moisturizing Cream 500ml</td>
+                                <td><span class="badge purple">Beauty</span></td>
+                                <td class="text-right">589</td>
+                                <td class="text-right text-white font-medium">$11,780</td>
+                                <td class="text-right"><span style="color:#22c55e;font-weight:500;font-size:0.75rem">+31.7%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MARKETING CAMPAIGNS TABLE -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">Marketing Campaigns</h2>
+                    <p class="card-subtitle">Active and recent marketing performance data</p>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Campaign</th>
+                            <th>Channel</th>
+                            <th class="text-right">Spend</th>
+                            <th class="text-right">Conversions</th>
+                            <th class="text-right">ROI</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-white font-medium">Summer Flash Sale</td>
+                            <td><span class="badge orange">Email</span></td>
+                            <td class="text-right">$2,400</td>
+                            <td class="text-right">1,842</td>
+                            <td class="text-right"><span style="color:#22c55e;font-weight:500">+340%</span></td>
+                            <td class="text-center"><span class="badge green">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-white font-medium">New User Acquisition</td>
+                            <td><span class="badge blue">Google Ads</span></td>
+                            <td class="text-right">$4,800</td>
+                            <td class="text-right">923</td>
+                            <td class="text-right"><span style="color:#22c55e;font-weight:500">+215%</span></td>
+                            <td class="text-center"><span class="badge green">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-white font-medium">Brand Awareness Q1</td>
+                            <td><span class="badge yellow">Facebook</span></td>
+                            <td class="text-right">$3,200</td>
+                            <td class="text-right">512</td>
+                            <td class="text-right"><span style="color:#22c55e;font-weight:500">+185%</span></td>
+                            <td class="text-center"><span class="badge blue">Ended</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-white font-medium">Product Launch - Apr</td>
+                            <td><span class="badge purple">Instagram</span></td>
+                            <td class="text-right">$5,600</td>
+                            <td class="text-right">763</td>
+                            <td class="text-right"><span style="color:#22c55e;font-weight:500">+267%</span></td>
+                            <td class="text-center"><span class="badge green">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-white font-medium">Retargeting Campaign</td>
+                            <td><span class="badge blue">Google Ads</span></td>
+                            <td class="text-right">$1,800</td>
+                            <td class="text-right">1,247</td>
+                            <td class="text-right"><span style="color:#22c55e;font-weight:500">+412%</span></td>
+                            <td class="text-center"><span class="badge green">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-white font-medium">Affiliate Program</td>
+                            <td><span class="badge green">Partners</span></td>
+                            <td class="text-right">$3,500</td>
+                            <td class="text-right">438</td>
+                            <td class="text-right"><span style="color:#22c55e;font-weight:500">+158%</span></td>
+                            <td class="text-center"><span class="badge green">Active</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PAGE NAV -->
+        <div class="page-nav">
+            <a href="login.html" class="page-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Login
+            </a>
+            <a href="register.html" class="page-link">
+                Go to Register
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+        </div>
     </div>
 
-    <!-- Top Products Table -->
-    <div class="rounded-2xl border" style="background-color: #111827; border-color: #374151;">
-      <div class="p-6 border-b" style="border-color: #374151;">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="font-poppins font-bold text-base text-white">Top Selling Products</h2>
-            <p class="text-xs font-inter text-gray-400 mt-0.5">Best performing products this month</p>
-          </div>
-          <button class="text-xs font-inter text-primary hover:text-primary-hover transition-colors">View all</button>
-        </div>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead>
-            <tr style="border-bottom: 1px solid #374151;">
-              <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Product</th>
-              <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Category</th>
-              <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Revenue</th>
-              <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Units Sold</th>
-              <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Growth</th>
-              <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="smartphone" class="w-4 h-4 text-gray-400"></i></div>
-                  <div>
-                    <p class="text-sm font-inter font-medium text-white">iPhone 15 Pro Max</p>
-                    <p class="text-xs font-inter text-gray-500 sm:hidden">Electronics</p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Electronics</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$42,850</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">312</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #22c55e;">+18.4%</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Active</span></td>
-            </tr>
-            <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="laptop" class="w-4 h-4 text-gray-400"></i></div>
-                  <div>
-                    <p class="text-sm font-inter font-medium text-white">MacBook Air M3</p>
-                    <p class="text-xs font-inter text-gray-500 sm:hidden">Electronics</p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Electronics</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$38,200</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">189</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #22c55e;">+12.1%</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Active</span></td>
-            </tr>
-            <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="shirt" class="w-4 h-4 text-gray-400"></i></div>
-                  <div>
-                    <p class="text-sm font-inter font-medium text-white">Premium Cotton Hoodie</p>
-                    <p class="text-xs font-inter text-gray-500 sm:hidden">Fashion</p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Fashion</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$24,630</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">821</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #22c55e;">+9.7%</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Active</span></td>
-            </tr>
-            <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="glasses" class="w-4 h-4 text-gray-400"></i></div>
-                  <div>
-                    <p class="text-sm font-inter font-medium text-white">Wireless Earbuds Pro</p>
-                    <p class="text-xs font-inter text-gray-500 sm:hidden">Electronics</p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Electronics</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$19,450</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">547</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #ef4444;">-3.2%</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(239,68,68,0.15); color: #ef4444;">Low Stock</span></td>
-            </tr>
-            <tr class="hover:bg-gray-800/40 transition">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #1F2937;"><i data-lucide="couch" class="w-4 h-4 text-gray-400"></i></div>
-                  <div>
-                    <p class="text-sm font-inter font-medium text-white">Ergonomic Desk Chair</p>
-                    <p class="text-xs font-inter text-gray-500 sm:hidden">Home & Living</p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Home & Living</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$16,920</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-sm font-inter text-gray-300">142</span></td>
-              <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-medium" style="color: #22c55e;">+21.5%</span></td>
-              <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Active</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <script>
+        // ===== MOCK DATA =====
+        const revenueData = {
+            labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'],
+            revenue: [42500, 38200, 51000, 46900, 58300, 62400, 71800, 89500, 67200, 58400, 73100, 82600],
+            orders:  [312,   278,   395,   341,   428,   461,   532,   647,   489,   417,   538,   612],
+        };
 
-    <!-- Recent Orders + Marketing Table -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        const businessData = {
+            labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'],
+            revenue: [42500, 38200, 51000, 46900, 58300, 62400, 71800, 89500, 67200, 58400, 73100, 82600],
+            profit:  [12750, 10716, 14280, 11725, 16907, 18720, 22347, 31325, 17311, 14524, 21930, 26974],
+        };
 
-      <!-- Recent Orders Table -->
-      <div class="rounded-2xl border" style="background-color: #111827; border-color: #374151;">
-        <div class="p-6 border-b flex items-center justify-between" style="border-color: #374151;">
-          <div>
-            <h2 class="font-poppins font-bold text-base text-white">Recent Orders</h2>
-            <p class="text-xs font-inter text-gray-400 mt-0.5">Latest customer orders</p>
-          </div>
-          <button class="text-xs font-inter text-primary hover:text-primary-hover transition-colors">View all</button>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr style="border-bottom: 1px solid #374151;">
-                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Order ID</th>
-                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Customer</th>
-                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Total</th>
-                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Date</th>
-                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7821</span></td>
-                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Sarah Johnson</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$1,299</span></td>
-                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 21, 2026</span></td>
-                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Delivered</span></td>
-              </tr>
-              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7820</span></td>
-                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Michael Chen</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$849</span></td>
-                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 21, 2026</span></td>
-                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(251,191,36,0.15); color: #fbbf24;">Processing</span></td>
-              </tr>
-              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7819</span></td>
-                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Emily Davis</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$234</span></td>
-                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 20, 2026</span></td>
-                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(59,130,246,0.15); color: #3b82f6;">Shipped</span></td>
-              </tr>
-              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7818</span></td>
-                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">David Kim</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$1,580</span></td>
-                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 20, 2026</span></td>
-                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(239,68,68,0.15); color: #ef4444;">Cancelled</span></td>
-              </tr>
-              <tr class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">#ORD-7817</span></td>
-                <td class="px-6 py-4 hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">Jessica Lee</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter font-semibold text-white">$456</span></td>
-                <td class="px-6 py-4 hidden md:table-cell"><span class="text-sm font-inter text-gray-400">Apr 19, 2026</span></td>
-                <td class="px-6 py-4"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Delivered</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+        // ===== CHART.JS GLOBAL DEFAULTS =====
+        Chart.defaults.color = '#6b7280';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.font.size = 11;
 
-      <!-- Marketing Campaigns Table -->
-      <div class="rounded-2xl border" style="background-color: #111827; border-color: #374151;">
-        <div class="p-6 border-b flex items-center justify-between" style="border-color: #374151;">
-          <div>
-            <h2 class="font-poppins font-bold text-base text-white">Marketing Campaigns</h2>
-            <p class="text-xs font-inter text-gray-400 mt-0.5">Active campaign performance</p>
-          </div>
-          <button class="text-xs font-inter text-primary hover:text-primary-hover transition-colors">View all</button>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr style="border-bottom: 1px solid #374151;">
-                <th class="text-left px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Campaign</th>
-                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Budget</th>
-                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Spent</th>
-                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">ROI</th>
-                <th class="text-right px-6 py-3 text-xs font-inter font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4">
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-inter font-medium text-white">Facebook Ads</span>
-                  </div>
-                </td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$5,000</span></td>
-                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$4,520</span></td>
-                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #22c55e;">245%</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Success</span></td>
-              </tr>
-              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">Google Shopping</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$8,000</span></td>
-                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$7,250</span></td>
-                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #22c55e;">285%</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Success</span></td>
-              </tr>
-              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">Email Marketing</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$2,500</span></td>
-                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$1,830</span></td>
-                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #22c55e;">340%</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(34,197,94,0.15); color: #22c55e;">Success</span></td>
-              </tr>
-              <tr style="border-bottom: 1px solid #1F2937;" class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">Influencer Marketing</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$3,500</span></td>
-                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$3,280</span></td>
-                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #fbbf24;">165%</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(251,191,36,0.15); color: #fbbf24;">Running</span></td>
-              </tr>
-              <tr class="hover:bg-gray-800/40 transition">
-                <td class="px-6 py-4"><span class="text-sm font-inter font-medium text-white">SEO Organic</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-sm font-inter text-gray-300">$1,500</span></td>
-                <td class="px-6 py-4 text-right hidden sm:table-cell"><span class="text-sm font-inter text-gray-300">$1,210</span></td>
-                <td class="px-6 py-4 text-right hidden md:table-cell"><span class="text-xs font-inter font-semibold" style="color: #22c55e;">425%</span></td>
-                <td class="px-6 py-4 text-right"><span class="text-xs font-inter font-medium px-2.5 py-1 rounded-full" style="background-color: rgba(59,130,246,0.15); color: #3b82f6;">Optimized</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+        // ===== TOOLTIP STYLING =====
+        const tooltipDefaults = {
+            backgroundColor: '#1f2937',
+            titleColor: '#ffffff',
+            bodyColor: '#9ca3af',
+            borderColor: '#374151',
+            borderWidth: 1,
+            cornerRadius: 6,
+            padding: 10,
+            titleFont: { weight: '600', size: 12 },
+            bodyFont: { size: 11 },
+        };
 
-    </div>
+        // ===== REVENUE CHART =====
+        let revenueChart;
+        let revenueTab = 'bar';
 
-  </main>
+        function buildRevenueChart(type) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
 
-  <script>
-    lucide.createIcons();
+            if (revenueChart) revenueChart.destroy();
 
-    var r = React.createElement.bind(React);
+            const datasets = type === 'bar'
+                ? [{
+                    label: 'Revenue',
+                    data: revenueData.revenue,
+                    backgroundColor: '#DF6B33',
+                    borderRadius: 4,
+                    borderSkipped: false,
+                  }]
+                : [
+                    {
+                        label: 'Revenue',
+                        data: revenueData.revenue,
+                        borderColor: '#DF6B33',
+                        backgroundColor: 'rgba(223,107,51,0.1)',
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#DF6B33',
+                        pointBorderColor: '#1f2937',
+                        pointBorderWidth: 2,
+                        fill: true,
+                    },
+                    {
+                        label: 'Orders',
+                        data: revenueData.orders,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59,130,246,0.05)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#1f2937',
+                        pointBorderWidth: 2,
+                        fill: true,
+                        yAxisID: 'y1',
+                    }
+                  ];
 
-    // ── Revenue Trend (Area Chart) ──────────────────────────────────────────
-    var revenueData = [
-      { month: 'May', revenue: 18200 }, { month: 'Jun', revenue: 21300 },
-      { month: 'Jul', revenue: 19800 }, { month: 'Aug', revenue: 24700 },
-      { month: 'Sep', revenue: 22100 }, { month: 'Oct', revenue: 26800 },
-      { month: 'Nov', revenue: 31200 }, { month: 'Dec', revenue: 38900 },
-      { month: 'Jan', revenue: 24100 }, { month: 'Feb', revenue: 27500 },
-      { month: 'Mar', revenue: 29800 }, { month: 'Apr', revenue: 32150 },
-    ];
+            revenueChart = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: revenueData.labels,
+                    datasets: datasets,
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: type === 'bar', position: 'top', align: 'end', labels: { boxWidth: 12, padding: 16 } },
+                        tooltip: { ...tooltipDefaults, callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toLocaleString()}` } },
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#6b7280' },
+                            border: { display: false },
+                        },
+                        y: {
+                            grid: { color: '#374151', drawBorder: false },
+                            ticks: { color: '#6b7280', callback: v => `$${v/1000}k` },
+                            border: { display: false },
+                        },
+                        ...(type !== 'bar' ? {
+                            y1: {
+                                position: 'right',
+                                grid: { display: false },
+                                ticks: { color: '#6b7280' },
+                                border: { display: false },
+                            }
+                        } : {}),
+                    },
+                },
+            });
+        }
 
-    var tooltipStyle = { backgroundColor: '#111827', border: '1px solid #374151', borderRadius: 12, color: '#F9FAFB', fontFamily: 'Inter, sans-serif', fontSize: 12 };
+        buildRevenueChart('bar');
 
-    var revGrad = r(Recharts.Defs, {},
-      r(Recharts.LinearGradient, { id: 'revGrad', x1: '0', y1: '0', x2: '0', y2: '1' },
-        r(Recharts.Stop, { offset: '0%', stopColor: '#DF6B33', stopOpacity: 0.3 }),
-        r(Recharts.Stop, { offset: '100%', stopColor: '#DF6B33', stopOpacity: 0 })
-      )
-    );
+        function setRevenueTab(tab) {
+            revenueTab = tab;
+            document.getElementById('tabBar').classList.toggle('active', tab === 'bar');
+            document.getElementById('tabLine').classList.toggle('active', tab === 'line');
+            buildRevenueChart(tab);
+        }
 
-    var el1 = r(Recharts.AreaChart, { data: revenueData, margin: { top: 5, right: 5, left: -20, bottom: 0 } },
-      r(Recharts.CartesianGrid, { strokeDasharray: '3 3', vertical: false, stroke: '#374151' }),
-      r(Recharts.XAxis, { dataKey: 'month', tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
-      r(Recharts.YAxis, { tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false, tickFormatter: function(v){ return '$' + (v/1000) + 'k'; } }),
-      r(Recharts.Tooltip, { contentStyle: tooltipStyle, formatter: function(v){ return ['$' + v.toLocaleString()]; } }),
-      revGrad,
-      r(Recharts.Area, { type: 'monotone', dataKey: 'revenue', stroke: '#DF6B33', strokeWidth: 2.5, fill: 'url(#revGrad)', dot: false, activeDot: { r: 5, fill: '#DF6B33', stroke: '#111827', strokeWidth: 2 } })
-    );
-    ReactDOM.createRoot(document.getElementById('revenueChart')).render(el1);
+        // ===== CATEGORY CHART (PIE/DOUGHNUT) =====
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Electronics', 'Fashion', 'Home & Living', 'Beauty', 'Sports'],
+                datasets: [{
+                    data: [38, 24, 18, 12, 8],
+                    backgroundColor: ['#DF6B33', '#3b82f6', '#22c55e', '#f59e0b', '#a855f7'],
+                    borderColor: '#1f2937',
+                    borderWidth: 3,
+                    hoverOffset: 6,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '62%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { ...tooltipDefaults, callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } },
+                },
+            },
+        });
 
-    // ── Sales by Category (Pie Chart) ─────────────────────────────────────
-    var catData = [
-      { name: 'Electronics', value: 38, fill: '#DF6B33' },
-      { name: 'Fashion', value: 24, fill: '#3b82f6' },
-      { name: 'Home & Living', value: 18, fill: '#a855f7' },
-      { name: 'Beauty', value: 12, fill: '#22c55e' },
-      { name: 'Sports', value: 8, fill: '#f59e0b' },
-    ];
+        // ===== BUSINESS RESULTS CHART =====
+        let resultChart;
+        let resultTab = 'area';
 
-    var el2 = r(Recharts.PieChart, { margin: { top: 0, right: 0, bottom: 0, left: 0 } },
-      r(Recharts.Pie, { data: catData, cx: '50%', cy: '50%', innerRadius: 55, outerRadius: 90, paddingAngle: 3, dataKey: 'value', stroke: 'none' }),
-      r(Recharts.Tooltip, { contentStyle: tooltipStyle, formatter: function(v, n){ return [v + '%', n]; } })
-    );
-    ReactDOM.createRoot(document.getElementById('categoryChart')).render(el2);
+        function buildResultChart(type) {
+            const ctx = document.getElementById('resultChart').getContext('2d');
 
-    // ── Orders by Channel (Bar Chart) ─────────────────────────────────────
-    var chData = [
-      { channel: 'Website', orders: 1842 }, { channel: 'Mobile App', orders: 1205 },
-      { channel: 'Marketplace', orders: 623 }, { channel: 'Social Media', orders: 177 },
-    ];
+            if (resultChart) resultChart.destroy();
 
-    var el3 = r(Recharts.BarChart, { data: chData, margin: { top: 5, right: 5, left: -20, bottom: 0 } },
-      r(Recharts.CartesianGrid, { strokeDasharray: '3 3', vertical: false, stroke: '#374151' }),
-      r(Recharts.XAxis, { dataKey: 'channel', tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
-      r(Recharts.YAxis, { tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
-      r(Recharts.Tooltip, { contentStyle: tooltipStyle }),
-      r(Recharts.Bar, { dataKey: 'orders', radius: [6, 6, 0, 0], fill: '#DF6B33', fillOpacity: 0.9, maxBarSize: 60 })
-    );
-    ReactDOM.createRoot(document.getElementById('channelChart')).render(el3);
+            const datasets = type === 'area'
+                ? [
+                    {
+                        label: 'Revenue',
+                        data: businessData.revenue,
+                        borderColor: '#DF6B33',
+                        backgroundColor: (ctx) => {
+                            const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, ctx.chart.height);
+                            gradient.addColorStop(0, 'rgba(223,107,51,0.35)');
+                            gradient.addColorStop(1, 'rgba(223,107,51,0)');
+                            return gradient;
+                        },
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#DF6B33',
+                        pointBorderColor: '#1f2937',
+                        pointBorderWidth: 2,
+                    },
+                    {
+                        label: 'Profit',
+                        data: businessData.profit,
+                        borderColor: '#22c55e',
+                        backgroundColor: (ctx) => {
+                            const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, ctx.chart.height);
+                            gradient.addColorStop(0, 'rgba(34,197,94,0.3)');
+                            gradient.addColorStop(1, 'rgba(34,197,94,0)');
+                            return gradient;
+                        },
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#22c55e',
+                        pointBorderColor: '#1f2937',
+                        pointBorderWidth: 2,
+                    },
+                  ]
+                : [
+                    {
+                        label: 'Revenue',
+                        data: businessData.revenue,
+                        backgroundColor: '#DF6B33',
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    },
+                    {
+                        label: 'Profit',
+                        data: businessData.profit,
+                        backgroundColor: '#22c55e',
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    },
+                  ];
 
-    // ── Marketing Performance (Line Chart) ─────────────────────────────────
-    var mktData = [
-      { week: 'W1', traffic: 12400, conversions: 382 },
-      { week: 'W2', traffic: 14800, conversions: 441 },
-      { week: 'W3', traffic: 13200, conversions: 398 },
-      { week: 'W4', traffic: 16700, conversions: 523 },
-      { week: 'W5', traffic: 15100, conversions: 467 },
-      { week: 'W6', traffic: 18900, conversions: 598 },
-    ];
+            resultChart = new Chart(ctx, {
+                type: type === 'area' ? 'line' : 'bar',
+                data: {
+                    labels: businessData.labels,
+                    datasets: datasets,
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { ...tooltipDefaults, callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toLocaleString()}` } },
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#6b7280' },
+                            border: { display: false },
+                        },
+                        y: {
+                            grid: { color: '#374151', drawBorder: false },
+                            ticks: { color: '#6b7280', callback: v => `$${v/1000}k` },
+                            border: { display: false },
+                        },
+                    },
+                },
+            });
+        }
 
-    var el4 = r(Recharts.LineChart, { data: mktData, margin: { top: 5, right: 5, left: -20, bottom: 0 } },
-      r(Recharts.CartesianGrid, { strokeDasharray: '3 3', vertical: false, stroke: '#374151' }),
-      r(Recharts.XAxis, { dataKey: 'week', tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
-      r(Recharts.YAxis, { tick: { fill: '#9CA3AF', fontSize: 11 }, axisLine: false, tickLine: false }),
-      r(Recharts.Tooltip, { contentStyle: tooltipStyle }),
-      r(Recharts.Line, { type: 'monotone', dataKey: 'traffic', stroke: '#DF6B33', strokeWidth: 2.5, dot: { r: 3, fill: '#DF6B33' }, activeDot: { r: 5 } }),
-      r(Recharts.Line, { type: 'monotone', dataKey: 'conversions', stroke: '#22c55e', strokeWidth: 2.5, dot: { r: 3, fill: '#22c55e' }, activeDot: { r: 5 } })
-    );
-    ReactDOM.createRoot(document.getElementById('marketingChart')).render(el4);
-  </script>
+        buildResultChart('area');
 
+        function setResultTab(tab) {
+            resultTab = tab;
+            document.getElementById('tabArea').classList.toggle('active', tab === 'area');
+            document.getElementById('tabBarResult').classList.toggle('active', tab === 'bar');
+            buildResultChart(tab);
+        }
+    </script>
 </body>
 </html>
